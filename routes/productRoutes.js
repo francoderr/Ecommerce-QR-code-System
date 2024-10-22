@@ -6,18 +6,42 @@ let products = [
   {
     id: 1,
     name: "Men's Suites",
-    category: "men's wear",
+    category: "men",
     price: 140,
     stock: 20,
     image: "/images/mens-suits.jpg",
   },
   {
     id: 2,
+    name: "Women's Staffs",
+    category: "ladies",
+    price: 600,
+    stock: 2,
+    image: "/images/women-staffs.jpg",
+  },
+  {
+    id: 3,
     name: "Women's Suits",
-    category: "women's wear",
+    category: "ladies",
     price: 240,
     stock: 20,
     image: "/images/women-ware.jpg",
+  },
+  {
+    id: 4,
+    name: "Women's Bags",
+    category: "ladies",
+    price: 1000,
+    stock: 10,
+    image: "/images/women-bags.jpg",
+  },
+  {
+    id: 5,
+    name: "Men's wear",
+    category: "men",
+    price: 500,
+    stock: 5,
+    image: "/images/mens-ware.jpg",
   },
 ];
 
@@ -26,13 +50,17 @@ router.get("/products", (req, res) => {
   res.render("products", { products: products });
 });
 
-// get a single product by id
-router.get("/products/:id", (req, res) => {
-  const product = products.find((p) => p.id === parseInt(req.params.id));
-  if (product) {
-    return res.render("productDetail", { product: product });
+// get products by category
+router.get("/products/category/:category", (req, res) => {
+  const category = req.params.category.toLowerCase();
+  const filteredProducts = products.filter((p) =>
+    p.category.toLowerCase().includes(category),
+  );
+  if (filteredProducts.length > 0) {
+    res.render("products", { products: filteredProducts });
+  } else {
+    res.status(404).send("No products found in this category");
   }
-  return res.status(404).send("Product not found");
 });
 
 // add a new product
