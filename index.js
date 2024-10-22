@@ -1,12 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(bodyParser.json());
+app.set("view engine", "ejs");
 
-const productRoutes = require("./routes/productRoutes");
+app.use(bodyParser.json());
+app.use(express.static("public"));
 
 app.use("/api", productRoutes);
 
