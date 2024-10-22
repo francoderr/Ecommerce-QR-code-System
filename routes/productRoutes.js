@@ -2,11 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 // in-memory product storage (we'll replace this with a database)
-let products = [];
+let products = [
+  { name: "Men's Suites", category: "mens wear", price: 140, stock: 20 },
+];
 
 // gets all products
 router.get("/products", (req, res) => {
-  res.json(products);
+  res.render("products", { products: products });
 });
 
 // get a single product by id
