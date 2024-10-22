@@ -3,7 +3,22 @@ const router = express.Router();
 
 // in-memory product storage (we'll replace this with a database)
 let products = [
-  { name: "Men's Suites", category: "mens wear", price: 140, stock: 20 },
+  {
+    id: 1,
+    name: "Men's Suites",
+    category: "men's wear",
+    price: 140,
+    stock: 20,
+    image: "/images/mens-suits.jpg",
+  },
+  {
+    id: 2,
+    name: "Women's Suits",
+    category: "women's wear",
+    price: 240,
+    stock: 20,
+    image: "/images/women-ware.jpg",
+  },
 ];
 
 // gets all products
@@ -14,10 +29,10 @@ router.get("/products", (req, res) => {
 // get a single product by id
 router.get("/products/:id", (req, res) => {
   const product = products.find((p) => p.id === parseInt(req.params.id));
-  if (!product) {
-    return res.status(404).send("Product not found");
+  if (product) {
+    return res.render("productDetail", { product: product });
   }
-  res.json(product);
+  return res.status(404).send("Product not found");
 });
 
 // add a new product
@@ -28,10 +43,11 @@ router.post("/products", (req, res) => {
     category: req.body.category,
     price: req.body.price,
     stock: req.body.stock,
+    image: req.body.image,
   };
 
   products.push(newProduct);
-  res.status(201).json(newProduct);
+  res.status(201).render(newProduct);
 });
 
 // update a product
@@ -44,7 +60,8 @@ router.put("/products/:id", (req, res) => {
   product.category = req.body.category || product.category;
   product.price = req.body.price || product.price;
   product.stock = req.body.stock || product.stock;
-  res.json(product);
+  //   res.json(product);
+  res.render("productDetail", { product: product });
 });
 
 // delete a product
