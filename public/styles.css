@@ -11,6 +11,21 @@ h1 {
   margin-bottom: 30px;
 }
 
+a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  padding: 10px;
+  border: "1px solid #000";
+}
+
+.qrcode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .product-list {
   display: flex;
   justify-content: center;
@@ -53,4 +68,13 @@ h1 {
 .product p:nth-child(4) {
   font-weight: 600;
   color: #333;
+}
+
+button {
+  padding: 10px;
+  border-radius: 8px;
+}
+
+button:hover {
+  cursor: pointer;
 }
