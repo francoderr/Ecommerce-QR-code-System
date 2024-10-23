@@ -6,7 +6,7 @@ let products = [
   {
     id: 1,
     name: "Men's Suites",
-    category: "men's wear",
+    category: "men",
     price: 140,
     stock: 20,
     image: "/images/mens-suits.jpg",
@@ -14,16 +14,53 @@ let products = [
   {
     id: 2,
     name: "Women's Suits",
-    category: "women's wear",
+    category: "ladies",
     price: 240,
     stock: 20,
     image: "/images/women-ware.jpg",
+  },
+  {
+    id: 3,
+    name: "Men's Wear",
+    category: "men",
+    price: 150,
+    stock: 5,
+    image: "/images/mens-ware.jpg",
+  },
+  {
+    id: 4,
+    name: "Women's bag",
+    category: "ladies",
+    price: 600,
+    stock: 20,
+    image: "/images/women-bags.jpg",
+  },
+  {
+    id: 5,
+    name: "Women's Staff",
+    category: "ladies",
+    price: 500,
+    stock: 10,
+    image: "/images/women-staffs.jpg",
   },
 ];
 
 // gets all products
 router.get("/products", (req, res) => {
   res.render("products", { products: products });
+});
+
+// get products by category
+router.get("/products/category/:category", (req, res) => {
+  const category = req.params.category.toLowerCase();
+  const filteredProducts = products.filter((p) =>
+    p.category.toLocaleLowerCase().includes(category),
+  );
+  if (filteredProducts.length > 0) {
+    res.render("products", { products: filteredProducts });
+  } else {
+    res.status(404).send("No products found in this category");
+  }
 });
 
 // get a single product by id
