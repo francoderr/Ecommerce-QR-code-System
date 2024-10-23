@@ -86,7 +86,14 @@ router.post("/cart/add", (req, res) => {
     req.session.cart = [];
   }
 
-  req.session.cart.push(product);
+  const cartProduct = req.session.cart.find((p) => p.id === productId);
+
+  if (cartProduct) {
+    cartProduct.qty += 1;
+  } else {
+    req.session.cart.push({ ...product, qty: 1 });
+  }
+
   res.redirect("/cart");
 });
 
@@ -104,11 +111,19 @@ router.post("/checkout", (req, res) => {
     return res.redirect("/cart");
   }
 
+  const totalPrice = cart.reduce(
+    (acc, product) => acc + product.price * product.qty,
+    0,
+  );
+
   // generate a qr code for the cart items
   const cartDetails = cart
-    .map((product) => `${product.name}: ${product.price}`)
-    .join(",");
-  QRCode.toDataURL(cartDetails, (err, url) => {
+    .map((product) => `${product.name}: ${product.price} (Qty: ${product.qty})`)
+    .join("\n");
+
+  const checkoutDetails = `${cartDetails}\nTotal Price: Kshs${totalPrice}`;
+
+  QRCode.toDataURL(checkoutDetails, (err, url) => {
     if (err) {
       return res.status(500).send("Failed to generate QR Code");
     }
@@ -117,7 +132,11 @@ router.post("/checkout", (req, res) => {
     req.session.cart = [];
 
     // render the checkout page with the qr code
-    res.render("checkout", { qrCodeUrl: url });
+    res.render("checkout", {
+      qrCodeUrl: url,
+      cartDetails: checkoutDetails,
+      totalPrice,
+    });
   });
 });
 

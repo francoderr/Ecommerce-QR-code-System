@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <h1>Checkout Complete</h1>
+    <h1>Checkout</h1>
     <p>Here is your QR code:</p>
     <div class="qrcode">
       <img src="<%= qrCodeUrl %>" alt="QR Code" />
     </div>
+    <h3>Items in your Cart:</h3>
+    <pre><%= cartDetails %></pre>
     <a href="/products">Go back to shopping</a>
   </body>
 </html>
