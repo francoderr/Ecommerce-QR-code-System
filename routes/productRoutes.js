@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const QRCode = require("qrcode");
 
 // in-memory product storage (we'll replace this with a database)
 let products = [
@@ -72,6 +73,54 @@ router.get("/products/:id", (req, res) => {
   return res.status(404).send("Product not found");
 });
 
+// add a product to the cart
+router.post("/cart/add", (req, res) => {
+  const productId = parseInt(req.body.productId);
+  const product = products.find((p) => p.id === productId);
+
+  if (!product) {
+    return res.status(404).send("Product not found");
+  }
+
+  if (!req.session.cart) {
+    req.session.cart = [];
+  }
+
+  req.session.cart.push(product);
+  res.redirect("/cart");
+});
+
+// route to display cart
+router.get("/cart", (req, res) => {
+  const cart = req.session.cart || [];
+  res.render("cart", { cart: cart });
+});
+
+// handle checkout and generate qr code
+router.post("/checkout", (req, res) => {
+  const cart = req.session.cart || [];
+
+  if (cart.length === 0) {
+    return res.redirect("/cart");
+  }
+
+  // generate a qr code for the cart items
+  const cartDetails = cart
+    .map((product) => `${product.name}: ${product.price}`)
+    .join(",");
+  QRCode.toDataURL(cartDetails, (err, url) => {
+    if (err) {
+      return res.status(500).send("Failed to generate QR Code");
+    }
+
+    // clear cart after checkout
+    req.session.cart = [];
+
+    // render the checkout page with the qr code
+    res.render("checkout", { qrCodeUrl: url });
+  });
+});
+
 // add a new product
 router.post("/products", (req, res) => {
   const newProduct = {
@@ -84,7 +133,7 @@ router.post("/products", (req, res) => {
   };
 
   products.push(newProduct);
-  res.status(201).render(newProduct);
+  res.status(201).json(newProduct);
 });
 
 // update a product
